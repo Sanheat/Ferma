@@ -1,0 +1,87 @@
+{
+  "file_key": "hzYBDDPO9of4koUKPWMaIW",
+  "file_url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW",
+  "figma_page": {
+    "id": "4138:2288",
+    "name": "Контрагент (Ready for Dev)"
+  },
+  "note": "Каждый node_id — прямая ссылка на фрейм в Figma. Для Claude Code используй формат с двоеточием (4139:10372), для URL — с дефисом (4139-10372).",
+
+  "pages": {
+    "login": {
+      "name": "Log in",
+      "description": "Страница авторизации",
+      "breakpoints": {
+        "1280": { "node_id": "4166:4410", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4166-4410" },
+        "480":  { "node_id": "4166:4504", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4166-4504" },
+        "375":  { "node_id": "4168:4678", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4168-4678" }
+      }
+    },
+
+    "main_screen": {
+      "name": "Главный экран",
+      "description": "Основной экран создания заказа (Контрагент). Base state.",
+      "breakpoints": {
+        "1920": { "node_id": "4139:10372", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4139-10372" },
+        "1440": { "node_id": "4138:9671",  "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4138-9671" },
+        "1280": { "node_id": "4144:10579", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4144-10579" },
+        "1024": { "node_id": "4145:11603", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4145-11603" },
+        "768":  { "node_id": "4152:3301",  "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4152-3301" },
+        "375":  { "node_id": "4155:3843",  "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4155-3843" }
+      },
+      "ui_states_1440px": {
+        "description": "Дополнительные состояния при 1440px — разное кол-во позиций, модалки, нотификации",
+        "state_1_with_modal_confirm":     { "node_id": "4523:37143" },
+        "state_2_with_modal_action":      { "node_id": "4523:37696" },
+        "state_3_notification":           { "node_id": "4529:38249" },
+        "state_4_notification_2":         { "node_id": "4529:38823" },
+        "state_5_notification_3":         { "node_id": "4529:39268" },
+        "state_6_notification_4":         { "node_id": "4529:39729" },
+        "state_7":                        { "node_id": "4532:28131" },
+        "state_8_short":                  { "node_id": "4532:28606" },
+        "state_manager_a":                { "node_id": "4537:34420" },
+        "state_manager_b":                { "node_id": "4549:35951" },
+        "state_manager_c":                { "node_id": "4549:36520" }
+      }
+    },
+
+    "main_screen_manager": {
+      "name": "Главная (Менеджер)",
+      "description": "Экран создания заявки для роли Менеджера — отдельная структура навигации",
+      "breakpoints": {
+        "1440_order_view": { "node_id": "4549:45249", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4549-45249" }
+      }
+    },
+
+    "order_history": {
+      "name": "История заказов",
+      "description": "Список заказов с фильтрами и пагинацией",
+      "breakpoints": {
+        "1920": { "node_id": "4168:5540",  "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4168-5540" },
+        "1440": { "node_id": "4168:6151",  "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4168-6151" },
+        "1280": { "node_id": "4168:6385",  "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4168-6385" },
+        "1280_empty": { "node_id": "4532:29906", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4532-29906", "note": "Empty state" },
+        "1024": { "node_id": "4170:13317", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4170-13317" },
+        "768":  { "node_id": "4170:13851", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4170-13851" },
+        "375":  { "node_id": "4176:5011",  "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4176-5011" },
+        "375_empty": { "node_id": "4532:30359", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4532-30359", "note": "Empty state" }
+      }
+    },
+
+    "not_found": {
+      "name": "404",
+      "description": "Страница ошибки 404",
+      "breakpoints": {
+        "1280": { "node_id": "4212:10164", "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4212-10164" },
+        "480":  { "node_id": "4235:9077",  "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4235-9077" },
+        "375":  { "node_id": "4235:9037",  "url": "https://www.figma.com/design/hzYBDDPO9of4koUKPWMaIW?node-id=4235-9037" }
+      }
+    }
+  },
+
+  "figma_page_manager": {
+    "id": "4266:10543",
+    "name": "Менеджер (Ready for Dev)",
+    "note": "Страница Менеджера — нужен отдельный вызов get_metadata с nodeId: 4266:10543 чтобы получить аналогичный список фреймов"
+  }
+}

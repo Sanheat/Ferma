@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Страница не найдена</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="../components.css">
+  <style>
+    body { min-height: 100vh; display: flex; align-items: center; }
+
+    .notfound-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--sp-16);
+      align-items: center;
+      gap: var(--sp-8);
+    }
+
+    /* ── Left content ──────────────────────────────────── */
+    .notfound-code {
+      font-size: var(--fs-base);
+      font-weight: var(--fw-bold);
+      color: var(--color-text);
+      margin-bottom: var(--sp-3);
+    }
+
+    .notfound-title {
+      font-size: var(--fs-4xl);
+      font-weight: var(--fw-bold);
+      line-height: var(--lh-tight);
+      color: var(--color-text);
+      margin-bottom: var(--sp-4);
+    }
+
+    .notfound-subtitle {
+      font-size: var(--fs-lg);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--sp-8);
+    }
+
+    .notfound-actions {
+      display: flex;
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+    }
+
+    /* ── Right illustration ────────────────────────────── */
+    .notfound-illustration {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* SVG illustration placeholder */
+    .notfound-svg {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    /* ── Responsive ────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .notfound-layout {
+        grid-template-columns: 1fr;
+        padding: var(--sp-12) var(--sp-8);
+        gap: var(--sp-10);
+        align-items: flex-start;
+        padding-top: 100px;
+      }
+      .notfound-illustration { order: -1; }
+      .notfound-svg { max-width: 320px; margin: 0 auto; }
+    }
+
+    @media (max-width: 480px) {
+      .notfound-layout { padding: var(--sp-8) var(--sp-5); padding-top: 80px; }
+      .notfound-title { font-size: var(--fs-3xl); }
+    }
+
+    @media (max-width: 375px) {
+      .notfound-layout { padding: var(--sp-6) var(--sp-4); padding-top: 60px; }
+      .notfound-title { font-size: var(--fs-2xl); }
+      .notfound-actions { flex-direction: column; }
+      .notfound-actions .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="notfound-layout">
+
+    <!-- Left -->
+    <div>
+      <p class="notfound-code">404</p>
+      <h1 class="notfound-title">Что-то не так…</h1>
+      <p class="notfound-subtitle">Страница, которую вы ищете, не найдена</p>
+
+      <div class="notfound-actions">
+        <a href="javascript:history.back()" class="btn btn-outline">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Назад
+        </a>
+        <a href="main-screen.html" class="btn btn-primary">На главную</a>
+      </div>
+    </div>
+
+    <!-- Right illustration -->
+    <div class="notfound-illustration" aria-hidden="true">
+      <svg class="notfound-svg" viewBox="0 0 500 360" fill="none"
+           xmlns="http://www.w3.org/2000/svg">
+        <!-- Farm background -->
+        <g stroke="#1C1C1C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Ground line -->
+          <path d="M60 290 Q200 278 440 285" stroke-width="3"/>
+          <!-- Barn -->
+          <rect x="260" y="210" width="90" height="80" rx="3"/>
+          <path d="M255 210 L305 175 L355 210"/>
+          <rect x="290" y="248" width="30" height="42" rx="2"/>
+          <rect x="268" y="222" width="24" height="22" rx="2"/>
+          <rect x="318" y="222" width="24" height="22" rx="2"/>
+          <path d="M305 175 L305 165"/>
+          <!-- Small barn/shed -->
+          <rect x="370" y="240" width="60" height="50" rx="2"/>
+          <path d="M365 240 L400 220 L435 240"/>
+          <rect x="385" y="260" width="30" height="30" rx="2"/>
+          <!-- Tree -->
+          <path d="M440 285 L440 230"/>
+          <circle cx="440" cy="215" r="25"/>
+          <!-- Fence left -->
+          <path d="M80 290 L80 265 M95 290 L95 265 M110 290 L110 265 M125 290 L125 265"/>
+          <path d="M76 278 L129 278"/>
+          <path d="M76 268 L129 268"/>
+          <!-- Big chicken (running right) -->
+          <ellipse cx="160" cy="195" rx="40" ry="32" transform="rotate(-15 160 195)"/>
+          <!-- wing -->
+          <path d="M142 182 Q122 165 115 178 Q125 195 148 190"/>
+          <!-- tail -->
+          <path d="M196 190 Q218 168 225 175 Q220 192 198 198"/>
+          <path d="M196 193 Q222 182 228 188 Q220 202 198 202"/>
+          <!-- neck+head -->
+          <path d="M128 182 Q118 168 120 158 Q140 138 152 152"/>
+          <circle cx="116" cy="155" r="14"/>
+          <!-- beak -->
+          <path d="M104 153 L96 150 L104 158"/>
+          <!-- comb -->
+          <path d="M116 141 Q112 131 118 128 Q120 137 124 134 Q124 143 128 140"/>
+          <!-- eye -->
+          <circle cx="110" cy="153" r="2.5" fill="#1C1C1C"/>
+          <!-- legs -->
+          <path d="M152 223 L148 248 L140 258 M158 226 L160 250 L170 260"/>
+          <!-- foot claws -->
+          <path d="M140 258 L132 262 M140 258 L140 266 M148 248 L144 254"/>
+          <path d="M170 260 L178 264 M170 260 L172 268 M160 250 L156 256"/>
+        </g>
+
+        <!-- Small chicken 1 (left side) -->
+        <g stroke="#1C1C1C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="78" cy="228" rx="22" ry="18" transform="rotate(-10 78 228)"/>
+          <path d="M62 222 Q50 212 48 220 Q55 232 66 228"/>
+          <path d="M96 224 Q110 210 113 215 Q110 225 97 227"/>
+          <path d="M60 220 Q54 210 55 204 Q66 194 72 203"/>
+          <circle cx="52" cy="202" r="9"/>
+          <path d="M44 200 L38 198 L44 204"/>
+          <circle cx="49" cy="200" r="1.5" fill="#1C1C1C"/>
+          <path d="M64 242 L62 255 L58 261 M68 244 L69 256 L74 262"/>
+          <path d="M58 261 L53 264 M58 261 L58 267 M62 255 L59 259"/>
+          <path d="M74 262 L79 265 M74 262 L75 268 M69 256 L66 260"/>
+          <!-- comb -->
+          <path d="M52 193 Q50 187 53 185 Q54 190 57 188 Q57 194 59 192"/>
+        </g>
+
+        <!-- Small chicken 2 (far right near shed) -->
+        <g stroke="#1C1C1C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="370" cy="262" rx="16" ry="12" transform="rotate(5 370 262)"/>
+          <path d="M355 258 Q348 252 347 257 Q352 264 360 261"/>
+          <path d="M384 260 Q393 250 395 255 Q392 263 383 263"/>
+          <path d="M357 256 Q352 249 353 244 Q362 237 366 244"/>
+          <circle cx="350" cy="243" r="7"/>
+          <path d="M344 242 L339 240 L344 245"/>
+          <circle cx="347" cy="241" r="1.2" fill="#1C1C1C"/>
+          <path d="M364 272 L362 281 L359 285 M367 273 L368 282 L372 286"/>
+          <path d="M350 236 Q348 232 351 230 Q352 234 354 232 Q354 237 356 235"/>
+        </g>
+      </svg>
+    </div>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — Ферма Лычкиных</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="../components.css">
+  <style>
+    body { background: var(--color-bg); overflow: hidden; }
+
+    /* ── Layout ─────────────────────────────────────── */
+    .login-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Left panel ──────────────────────────────────── */
+    .login-left {
+      display: flex;
+      align-items: center;
+      padding: var(--sp-12) var(--sp-16);
+    }
+
+    .login-form-wrap {
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .login-title {
+      font-size: var(--fs-3xl);
+      font-weight: var(--fw-bold);
+      line-height: var(--lh-tight);
+      color: var(--color-text);
+      margin-bottom: var(--sp-3);
+    }
+
+    .login-subtitle {
+      font-size: var(--fs-md);
+      color: var(--color-text-secondary);
+      line-height: var(--lh-relaxed);
+      margin-bottom: var(--sp-8);
+    }
+
+    .login-footer {
+      margin-top: var(--sp-6);
+      text-align: center;
+      font-size: var(--fs-base);
+      color: var(--color-text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--color-primary);
+      font-weight: var(--fw-medium);
+    }
+    .login-footer a:hover { text-decoration: underline; }
+
+    /* ── Right panel (photo) ─────────────────────────── */
+    .login-right {
+      position: relative;
+      background: #D0C4B0;
+      border-top-left-radius: 32px;
+      overflow: hidden;
+    }
+
+    .login-photo-placeholder {
+      position: absolute;
+      inset: 0;
+      background: #C8B99A;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: var(--sp-8);
+    }
+
+    /* Decorative heart/calligraphy overlay */
+    .login-photo-script {
+      font-size: 36px;
+      color: rgba(255,255,255,.75);
+      font-style: italic;
+      font-weight: 300;
+      position: absolute;
+      bottom: var(--sp-8);
+      right: var(--sp-8);
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 900px) {
+      body { overflow: auto; }
+      .login-layout {
+        grid-template-columns: 1fr;
+        min-height: 100vh;
+      }
+      .login-right { display: none; }
+      .login-left {
+        justify-content: center;
+        padding: var(--sp-10) var(--sp-8);
+        align-items: flex-start;
+        padding-top: 80px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-left {
+        padding: var(--sp-8) var(--sp-5);
+        padding-top: 60px;
+      }
+      .login-title { font-size: var(--fs-2xl); }
+    }
+
+    @media (max-width: 375px) {
+      .login-left {
+        padding: var(--sp-6) var(--sp-4);
+        padding-top: var(--sp-10);
+      }
+      .login-form-wrap { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-layout">
+
+    <!-- ── Left: Form ─────────────────────────────────── -->
+    <div class="login-left">
+      <div class="login-form-wrap">
+        <h1 class="login-title">Вход личный кабинет</h1>
+        <p class="login-subtitle">Введите логин и пароль, которые вам предоставил менеджер</p>
+
+        <form action="#" method="post" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="login">Логин</label>
+            <input class="input" id="login" type="text" name="login"
+                   placeholder="Ваш логин" autocomplete="username">
+          </div>
+
+          <div class="form-group" style="margin-bottom: var(--sp-6)">
+            <label class="form-label" for="password">Пароль</label>
+            <input class="input input-password" id="password" type="password" name="password"
+                   placeholder="••••••••" autocomplete="current-password">
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg btn-full">Войти</button>
+        </form>
+
+        <p class="login-footer">
+          Для сотрудников <a href="manager-main.html">Панель менеджера</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- ── Right: Photo ───────────────────────────────── -->
+    <div class="login-right" aria-hidden="true">
+      <div class="login-photo-placeholder">
+        <span class="login-photo-script">С любовью</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

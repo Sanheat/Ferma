@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Главная — Ферма Лычкиных</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="../components.css">
+  <style>
+    /* ── Page-specific layout ─────────────────────────────── */
+    .main-content-wrap {
+      display: grid;
+      grid-template-columns: 1fr 272px;
+      gap: var(--sp-8);
+      align-items: flex-start;
+    }
+
+    /* ── Section headings ─────────────────────────────────── */
+    .section-title {
+      font-size: var(--fs-2xl);
+      font-weight: var(--fw-bold);
+      color: var(--color-text);
+      margin-bottom: var(--sp-5);
+    }
+
+    /* ── Product rows ─────────────────────────────────────── */
+    .product-list { margin-bottom: var(--sp-4); }
+
+    .product-item {
+      margin-bottom: var(--sp-2);
+      padding: var(--sp-4) var(--sp-5);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-lg);
+    }
+
+    .product-item__controls {
+      display: grid;
+      grid-template-columns: 1fr 0.72fr auto auto;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .product-item__delete {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: none;
+      color: var(--color-text-muted);
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: color var(--transition), background var(--transition);
+    }
+    .product-item__delete:hover { color: var(--color-cancelled); background: #FEF2F0; }
+
+    .product-item__meta {
+      margin-top: var(--sp-3);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .help-icon {
+      width: 16px; height: 16px;
+      border-radius: var(--r-full);
+      border: 1.5px solid var(--color-border);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      color: var(--color-text-muted);
+      cursor: help;
+      flex-shrink: 0;
+      font-style: normal;
+    }
+
+    /* ── Add position button ───────────────────────────────── */
+    .btn-add-position {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: 8px var(--sp-4);
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+      border: 1.5px solid transparent;
+      border-radius: var(--r-md);
+      font-size: var(--fs-base);
+      font-weight: var(--fw-semibold);
+      cursor: pointer;
+      transition: background var(--transition);
+      margin-bottom: var(--sp-6);
+    }
+    .btn-add-position:hover { background: #F0DDB8; }
+
+    /* ── Delivery + Date section ─────────────────────────── */
+    .delivery-date-section {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--sp-6);
+      margin-bottom: var(--sp-6);
+    }
+
+    .delivery-date-col label {
+      display: block;
+      font-size: var(--fs-sm);
+      color: var(--color-text-secondary);
+      font-weight: var(--fw-medium);
+      margin-bottom: var(--sp-2);
+    }
+
+    /* ── Comment section ─────────────────────────────────── */
+    .comment-section label {
+      display: block;
+      font-size: var(--fs-sm);
+      color: var(--color-text-secondary);
+      font-weight: var(--fw-medium);
+      margin-bottom: var(--sp-2);
+    }
+    .comment-section .textarea { min-height: 120px; }
+
+    /* ── Order panel (right sidebar) ─────────────────────── */
+    .order-panel {
+      position: sticky;
+      top: var(--sp-8);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 1280px) {
+      .main-content-wrap { grid-template-columns: 1fr 248px; gap: var(--sp-6); }
+    }
+
+    @media (max-width: 1024px) {
+      .main-content-wrap { grid-template-columns: 1fr 220px; gap: var(--sp-5); }
+      .product-item__controls { grid-template-columns: 1fr 0.65fr auto auto; }
+    }
+
+    @media (max-width: 768px) {
+      .main-content-wrap { grid-template-columns: 1fr; }
+      .product-item__controls { grid-template-columns: 1fr 1fr; gap: var(--sp-2); }
+      .product-item__controls .qty-counter { grid-column: 1; }
+      .product-item__controls .product-item__delete { grid-column: 2; justify-self: end; }
+      .delivery-date-section { grid-template-columns: 1fr; }
+      .order-panel { position: static; }
+      .section-title { font-size: var(--fs-xl); }
+    }
+
+    @media (max-width: 480px) {
+      .product-item { padding: var(--sp-3) var(--sp-3); }
+      .product-item__controls { grid-template-columns: 1fr; gap: var(--sp-2); }
+      .product-item__controls .qty-counter { width: fit-content; }
+      .product-item__controls .product-item__delete { grid-column: 1; justify-self: start; }
+    }
+
+    @media (max-width: 375px) {
+      .banner__title { font-size: var(--fs-xl); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Mobile Header ──────────────────────────────────────── -->
+<header class="mobile-header" id="mobileHeader">
+  <div class="mobile-header__logo">
+    <div class="mobile-header__icon" aria-hidden="true">
+      <!-- Chicken SVG badge -->
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="#C14830" stroke-width="1.5" fill="#FAF4EA"/>
+        <path d="M9 10 Q10 6 14 7 Q17 8 17 11 Q17 14 14 15 Q12 16 11 15" stroke="#C14830" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+        <ellipse cx="14" cy="17" rx="5" ry="4" fill="none" stroke="#C14830" stroke-width="1.2"/>
+        <path d="M7 19 L9 21 L12 19" stroke="#C14830" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="mobile-header__text">
+      <div class="mobile-header__name">Ферма Лычкиных</div>
+      <div class="mobile-header__sub">Личный кабинет</div>
+    </div>
+  </div>
+  <button class="mobile-header__menu" id="menuBtn" aria-label="Открыть меню"
+          aria-expanded="false" aria-controls="sidebar">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+      <path d="M3 6H19M3 11H19M3 16H19" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round"/>
+    </svg>
+  </button>
+</header>
+
+<!-- ── Sidebar overlay ────────────────────────────────────── -->
+<div class="sidebar-overlay" id="sidebarOverlay" role="presentation"></div>
+
+<!-- ── App layout ─────────────────────────────────────────── -->
+<div class="app-layout">
+
+  <!-- ── Sidebar ──────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Главное меню">
+
+    <!-- Logo -->
+    <div class="sidebar-logo">
+      <div class="sidebar-logo__icon" aria-hidden="true">
+        <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="26" cy="32" rx="14" ry="11" fill="none" stroke="#C14830" stroke-width="1.6"/>
+          <path d="M14 22 Q16 14 22 13 Q28 12 29 18 Q30 22 26 25" stroke="#C14830" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+          <path d="M29 19 Q36 17 38 20 Q39 24 34 26" stroke="#C14830" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+          <path d="M14 22 Q8 20 7 24" stroke="#C14830" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M18 38 L16 44 M26 39 L26 44 M34 38 L36 44" stroke="#C14830" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="20" cy="17" r="2" fill="#C14830"/>
+          <path d="M17 15 L15 13" stroke="#C14830" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M18 10 Q19 7 21 8 Q21 11 23 10 Q22 13 20 13" stroke="#C14830" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="sidebar-logo__text">
+        <span class="sidebar-logo__eyebrow">Крестьянское<br>Фермерское хозяйство</span>
+        <span class="sidebar-logo__name">Семьи<br>Лычкиных</span>
+        <span class="sidebar-logo__year">осн. 2008</span>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="sidebar-nav">
+      <a href="main-screen.html" class="nav-item is-active" aria-current="page">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M3 10L10 3L17 10V17H12.5V12.5H7.5V17H3V10Z"
+                stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        Главная
+      </a>
+      <a href="order-history.html" class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10 6.5V10L12.5 12.5" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        История заказов
+      </a>
+    </nav>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <div class="sidebar-support">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12.1 7.9L14.9 5.1M5.1 14.9L7.9 12.1M7.9 7.9L5.1 5.1M14.9 14.9L12.1 12.1"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Поддержка
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-user__info">
+          <div class="sidebar-user__name">ИП Иванов</div>
+          <div class="sidebar-user__address">г. Краснодар, ул. Северная 16/2<br>стр 1</div>
+        </div>
+        <button class="sidebar-user__logout" aria-label="Выйти">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M12 3H15C15.5523 3 16 3.44772 16 4V14C16 14.5523 15.5523 15 15 15H12"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M10 12L13 9L10 6" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13 9H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main content ──────────────────────────────────────── -->
+  <main class="page-content" id="main" tabindex="-1">
+
+    <!-- Banner -->
+    <div class="banner" role="banner">
+      <span class="banner__tag">Доставка</span>
+      <h2 class="banner__title">Настройте изображение, заголовок и описание баннера</h2>
+      <p class="banner__subtitle">Настройте содержимое баннера. Изменения автоматически применятся после повторного входа</p>
+    </div>
+
+    <h1 class="section-title">Новая заявка</h1>
+
+    <div class="main-content-wrap">
+
+      <!-- ── Form ─────────────────────────────────────────── -->
+      <div>
+
+        <!-- Product list -->
+        <div class="product-list" id="productList">
+
+          <!-- Row 1 (filled) -->
+          <div class="product-item" data-product-row>
+            <div class="product-item__controls">
+              <select class="select" aria-label="Продукт">
+                <option>Грудка</option>
+                <option>Фарш</option>
+                <option>Филе грудки ЦБ</option>
+                <option>Бескостные окорочка ЦБ</option>
+                <option>Головы ЦБ</option>
+              </select>
+              <select class="select" aria-label="Тара">
+                <option>Лоток</option>
+                <option>Ящик монолит</option>
+                <option>Пакет</option>
+              </select>
+              <div class="qty-counter" role="group" aria-label="Количество">
+                <button class="qty-counter__btn" type="button" aria-label="Уменьшить">−</button>
+                <span class="qty-counter__value" aria-live="polite">1</span>
+                <button class="qty-counter__btn" type="button" aria-label="Увеличить">+</button>
+              </div>
+              <button class="product-item__delete" type="button" aria-label="Удалить позицию">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M3 5H15M7 5V3.5C7 3.22 7.22 3 7.5 3H10.5C10.78 3 11 3.22 11 3.5V5"
+                        stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                  <path d="M4.5 5L5.5 15H12.5L13.5 5" stroke="currentColor" stroke-width="1.4"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M7 8V12M9 8V12M11 8V12" stroke="currentColor" stroke-width="1.3"
+                        stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="product-item__meta">
+              <label class="checkbox-label">
+                <input type="checkbox" checked>
+                Замороженное
+              </label>
+              <i class="help-icon" title="Заморозка применяется к позиции">?</i>
+            </div>
+          </div>
+
+          <!-- Row 2 (empty) -->
+          <div class="product-item" data-product-row>
+            <div class="product-item__controls">
+              <select class="select is-placeholder" aria-label="Продукт">
+                <option value="" selected>Продукт</option>
+                <option>Грудка</option>
+                <option>Фарш</option>
+                <option>Филе грудки ЦБ</option>
+                <option>Бескостные окорочка ЦБ</option>
+              </select>
+              <select class="select is-placeholder" aria-label="Тара">
+                <option value="" selected>Тара</option>
+                <option>Лоток</option>
+                <option>Ящик монолит</option>
+                <option>Пакет</option>
+              </select>
+              <div class="qty-counter" role="group" aria-label="Количество">
+                <button class="qty-counter__btn" type="button" aria-label="Уменьшить" disabled>−</button>
+                <span class="qty-counter__value" aria-live="polite">0</span>
+                <button class="qty-counter__btn" type="button" aria-label="Увеличить">+</button>
+              </div>
+              <button class="product-item__delete" type="button" aria-label="Удалить позицию">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M3 5H15M7 5V3.5C7 3.22 7.22 3 7.5 3H10.5C10.78 3 11 3.22 11 3.5V5"
+                        stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                  <path d="M4.5 5L5.5 15H12.5L13.5 5" stroke="currentColor" stroke-width="1.4"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M7 8V12M9 8V12M11 8V12" stroke="currentColor" stroke-width="1.3"
+                        stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="product-item__meta">
+              <label class="checkbox-label">
+                <input type="checkbox">
+                Замороженное
+              </label>
+              <i class="help-icon" title="Заморозка применяется к позиции">?</i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add position -->
+        <button class="btn-add-position" type="button" id="addPositionBtn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round"/>
+          </svg>
+          Добавить позицию
+        </button>
+
+        <!-- Delivery method + date -->
+        <div class="delivery-date-section">
+          <div class="delivery-date-col">
+            <label>Способ получения</label>
+            <div class="delivery-tabs" role="group" aria-label="Способ получения">
+              <button class="delivery-tab is-active" type="button" aria-pressed="true">Доставка</button>
+              <button class="delivery-tab" type="button" aria-pressed="false">Самовывоз</button>
+            </div>
+          </div>
+          <div class="delivery-date-col">
+            <label for="shipDate">Дата отгрузки</label>
+            <div class="date-field" id="shipDate" role="button" tabindex="0"
+                 aria-label="Выбрать дату отгрузки: 13 мая, среда">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <rect x="1.5" y="3" width="13" height="11.5" rx="2"
+                      stroke="currentColor" stroke-width="1.4"/>
+                <path d="M5 1.5V4M11 1.5V4" stroke="currentColor" stroke-width="1.4"
+                      stroke-linecap="round"/>
+                <path d="M1.5 7H14.5" stroke="currentColor" stroke-width="1.3"/>
+              </svg>
+              13 мая, среда
+            </div>
+          </div>
+        </div>
+
+        <!-- Comment -->
+        <div class="comment-section">
+          <label for="comment">Комментарий к заказу</label>
+          <textarea class="textarea" id="comment" name="comment"
+                    placeholder="Особые пожелания, удобное время доставки…"
+                    rows="5"></textarea>
+        </div>
+      </div>
+
+      <!-- ── Order panel ───────────────────────────────────── -->
+      <aside class="order-panel" aria-label="Итог заказа">
+        <div class="order-summary">
+          <div class="order-summary__submit">
+            <span class="order-summary__submit-link is-disabled"
+                  role="button" tabindex="0" aria-disabled="true">
+              Оформить заявку
+            </span>
+          </div>
+          <div class="order-summary__body">
+            <h3 class="order-summary__title">Итог заказа</h3>
+            <div class="order-summary__row">
+              <span class="order-summary__label">Продукты</span>
+              <span class="order-summary__value">0</span>
+            </div>
+            <div class="order-summary__row">
+              <span class="order-summary__label">Тип доставки</span>
+              <span class="order-summary__value">Не выбрано</span>
+            </div>
+            <div class="order-summary__row">
+              <span class="order-summary__label">Дата отгрузки</span>
+              <span class="order-summary__value">13 мая, среда</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-box__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M9 8V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="9" cy="5.5" r="0.8" fill="currentColor"/>
+            </svg>
+          </div>
+          <p class="info-box__text">
+            Заявки принимаются до 15:00 —<br>отгрузка через 2 рабочих дня
+          </p>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: Tutorial / Onboarding (step 1)
+     Add class `is-open` to show
+     ══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalTutorial" role="dialog" aria-modal="true"
+     aria-labelledby="tutorialTitle">
+  <div class="modal modal--tutorial">
+    <button class="modal__close" id="closeTutorial" aria-label="Закрыть">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="modal__body">
+      <h2 class="modal__title" id="tutorialTitle" style="font-size:var(--fs-lg)">
+        Добро пожаловать в систему заявок
+      </h2>
+      <p class="modal--tutorial__text modal__text">
+        Здесь вы можете оформлять заявки на продукцию Фермы Лычкиных. Мы проведём вас по
+        основным разделам — это займёт меньше минуты
+      </p>
+    </div>
+    <div class="modal--tutorial modal__nav">
+      <button class="modal__link" type="button">Назад</button>
+      <div class="modal__dots" aria-label="Шаг 1 из 7">
+        <span class="modal__dot is-active"></span>
+        <span class="modal__dot"></span>
+        <span class="modal__dot"></span>
+        <span class="modal__dot"></span>
+        <span class="modal__dot"></span>
+        <span class="modal__dot"></span>
+        <span class="modal__dot"></span>
+      </div>
+      <button class="modal__link" type="button">Дальше</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: Action / Tooltip (step 3 – "Добавить позицию")
+     ══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalAction" role="dialog" aria-modal="true"
+     aria-labelledby="actionTitle">
+  <div class="modal modal--tutorial">
+    <button class="modal__close" id="closeAction" aria-label="Закрыть">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="modal__body">
+      <h2 class="modal__title" id="actionTitle" style="font-size:var(--fs-lg)">
+        Нужно несколько позиций?
+      </h2>
+      <p class="modal--tutorial__text modal__text">
+        Нажмите «Добавить позицию» чтобы добавить ещё один продукт. Ненужную позицию можно
+        удалить иконкой корзины
+      </p>
+    </div>
+    <div class="modal--tutorial modal__nav">
+      <button class="modal__link" type="button">Назад</button>
+      <div class="modal__dots" aria-label="Шаг 3 из 7">
+        <span class="modal__dot"></span>
+        <span class="modal__dot"></span>
+        <span class="modal__dot is-active"></span>
+        <span class="modal__dot"></span>
+        <span class="modal__dot"></span>
+        <span class="modal__dot"></span>
+        <span class="modal__dot"></span>
+      </div>
+      <button class="modal__link" type="button">Дальше</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: Order success (shown after submit)
+     ══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalSuccess" role="dialog" aria-modal="true"
+     aria-labelledby="successTitle">
+  <div class="modal">
+    <div class="modal__illustration" aria-hidden="true">
+      <!-- Truck icon -->
+      <svg width="96" height="80" viewBox="0 0 96 80" fill="none">
+        <rect x="4" y="20" width="60" height="40" rx="4"
+              stroke="#1C1C1C" stroke-width="2.5" fill="none"/>
+        <path d="M64 36H80L88 46V60H64V36Z"
+              stroke="#1C1C1C" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+        <circle cx="24" cy="62" r="8" stroke="#1C1C1C" stroke-width="2.5" fill="none"/>
+        <circle cx="72" cy="62" r="8" stroke="#1C1C1C" stroke-width="2.5" fill="none"/>
+        <!-- Speed lines -->
+        <path d="M2 30H14M2 38H10M2 46H14" stroke="#1C1C1C" stroke-width="2"
+              stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="modal__body">
+      <h2 class="modal__title" id="successTitle">Заявка №13413 принята</h2>
+      <p class="modal__subtitle">Отгрузка — 18 мая, понедельник</p>
+    </div>
+    <div class="modal__footer">
+      <a href="order-history.html" class="btn btn-secondary">История</a>
+      <button type="button" class="btn btn-primary" id="newOrderBtn">Новый заказ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     NOTIFICATIONS  (toggle `is-visible` class)
+     ══════════════════════════════════════════════════════════ -->
+
+<!-- Notification 1: success -->
+<div class="notification" id="notif1" role="alert" aria-live="polite">
+  <div class="notification__icon" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="10" r="8.5" fill="#27AE60" opacity=".12"/>
+      <circle cx="10" cy="10" r="8.5" stroke="#27AE60" stroke-width="1.4"/>
+      <path d="M6.5 10L8.5 12L13.5 8" stroke="#27AE60" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="notification__text">
+    <div class="notification__title">Заявка принята</div>
+    <div class="notification__body">Ваш заказ успешно оформлен</div>
+  </div>
+  <button class="notification__close" aria-label="Закрыть уведомление">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
+<!-- Notification 2: warning / deadline -->
+<div class="notification" id="notif2" role="alert" aria-live="polite">
+  <div class="notification__icon" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="10" r="8.5" fill="#D4800A" opacity=".12"/>
+      <circle cx="10" cy="10" r="8.5" stroke="#D4800A" stroke-width="1.4"/>
+      <path d="M10 6.5V10.5" stroke="#D4800A" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="10" cy="13" r="0.9" fill="#D4800A"/>
+    </svg>
+  </div>
+  <div class="notification__text">
+    <div class="notification__title">Приём заявок закрыт</div>
+    <div class="notification__body">Заявки принимаются до 15:00. Попробуйте завтра</div>
+  </div>
+  <button class="notification__close" aria-label="Закрыть уведомление">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
+<!-- Notification 3: error -->
+<div class="notification" id="notif3" role="alert" aria-live="polite">
+  <div class="notification__icon" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="10" r="8.5" fill="#C0392B" opacity=".12"/>
+      <circle cx="10" cy="10" r="8.5" stroke="#C0392B" stroke-width="1.4"/>
+      <path d="M7 7L13 13M13 7L7 13" stroke="#C0392B" stroke-width="1.5"
+            stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="notification__text">
+    <div class="notification__title">Ошибка при отправке</div>
+    <div class="notification__body">Не удалось оформить заявку. Попробуйте ещё раз</div>
+  </div>
+  <button class="notification__close" aria-label="Закрыть уведомление">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="1.5"
+            stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  /* ── Sidebar toggle ──────────────────────────────────── */
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const menuBtn = document.getElementById('menuBtn');
+
+  function openSidebar() {
+    sidebar.classList.add('is-open');
+    overlay.classList.add('is-open');
+    menuBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('is-open');
+    overlay.classList.remove('is-open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  menuBtn.addEventListener('click', () => {
+    sidebar.classList.contains('is-open') ? closeSidebar() : openSidebar();
+  });
+  overlay.addEventListener('click', closeSidebar);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+
+  /* ── Delivery tabs ───────────────────────────────────── */
+  document.querySelectorAll('.delivery-tabs').forEach(group => {
+    group.querySelectorAll('.delivery-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        group.querySelectorAll('.delivery-tab').forEach(t => {
+          t.classList.remove('is-active');
+          t.setAttribute('aria-pressed', 'false');
+        });
+        tab.classList.add('is-active');
+        tab.setAttribute('aria-pressed', 'true');
+      });
+    });
+  });
+
+  /* ── Qty counters ────────────────────────────────────── */
+  document.querySelectorAll('.qty-counter').forEach(counter => {
+    const valueEl = counter.querySelector('.qty-counter__value');
+    const decBtn  = counter.querySelector('[aria-label="Уменьшить"]');
+    const incBtn  = counter.querySelector('[aria-label="Увеличить"]');
+    let val = parseInt(valueEl.textContent, 10);
+
+    function update() {
+      valueEl.textContent = val;
+      decBtn.disabled = val <= 0;
+    }
+    update();
+    incBtn.addEventListener('click', () => { val++; update(); });
+    decBtn.addEventListener('click', () => { if (val > 0) { val--; update(); } });
+  });
+
+  /* ── Add position ────────────────────────────────────── */
+  document.getElementById('addPositionBtn').addEventListener('click', function() {
+    const list = document.getElementById('productList');
+    const tpl  = list.querySelector('[data-product-row]').cloneNode(true);
+    tpl.querySelectorAll('select').forEach(s => { s.selectedIndex = 0; s.classList.add('is-placeholder'); });
+    tpl.querySelector('.qty-counter__value').textContent = '0';
+    tpl.querySelector('input[type="checkbox"]').checked = false;
+    list.appendChild(tpl);
+    // re-attach qty listeners
+    const newCounter = tpl.querySelector('.qty-counter');
+    const valueEl = newCounter.querySelector('.qty-counter__value');
+    const decBtn  = newCounter.querySelector('[aria-label="Уменьшить"]');
+    const incBtn  = newCounter.querySelector('[aria-label="Увеличить"]');
+    let val = 0;
+    decBtn.disabled = true;
+    incBtn.addEventListener('click', () => { val++; valueEl.textContent = val; decBtn.disabled = val <= 0; });
+    decBtn.addEventListener('click', () => { if (val > 0) { val--; valueEl.textContent = val; decBtn.disabled = val <= 0; } });
+    tpl.querySelector('.product-item__delete').addEventListener('click', () => tpl.remove());
+  });
+
+  /* ── Close modals ────────────────────────────────────── */
+  ['closeTutorial','closeAction'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => el.closest('.modal-overlay').classList.remove('is-open'));
+  });
+  document.getElementById('newOrderBtn')?.addEventListener('click', () => {
+    document.getElementById('modalSuccess').classList.remove('is-open');
+  });
+</script>
+</body>
+</html>

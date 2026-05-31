@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Главная (Менеджер) — Ферма Лычкиных</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="../components.css">
+  <style>
+    /* Inherits all styles from main-screen; page-specific additions below */
+
+    .main-content-wrap {
+      display: grid;
+      grid-template-columns: 1fr 272px;
+      gap: var(--sp-8);
+      align-items: flex-start;
+    }
+
+    .section-title {
+      font-size: var(--fs-2xl);
+      font-weight: var(--fw-bold);
+      color: var(--color-text);
+      margin-bottom: var(--sp-5);
+    }
+
+    .product-list { margin-bottom: var(--sp-4); }
+
+    .product-item {
+      margin-bottom: var(--sp-2);
+      padding: var(--sp-4) var(--sp-5);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-lg);
+    }
+    .product-item__controls {
+      display: grid;
+      grid-template-columns: 1fr 0.72fr auto auto;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+    .product-item__delete {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: none;
+      color: var(--color-text-muted);
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: color var(--transition), background var(--transition);
+    }
+    .product-item__delete:hover { color: var(--color-cancelled); background: #FEF2F0; }
+
+    .product-item__meta {
+      margin-top: var(--sp-3);
+      display: flex; align-items: center; gap: var(--sp-2);
+    }
+    .help-icon {
+      width: 16px; height: 16px;
+      border-radius: var(--r-full);
+      border: 1.5px solid var(--color-border);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px; color: var(--color-text-muted); cursor: help;
+      flex-shrink: 0; font-style: normal;
+    }
+    .btn-add-position {
+      display: inline-flex; align-items: center; gap: var(--sp-2);
+      padding: 8px var(--sp-4);
+      background: var(--color-primary-light); color: var(--color-primary);
+      border: 1.5px solid transparent; border-radius: var(--r-md);
+      font-size: var(--fs-base); font-weight: var(--fw-semibold);
+      cursor: pointer; transition: background var(--transition);
+      margin-bottom: var(--sp-6);
+    }
+    .btn-add-position:hover { background: #F0DDB8; }
+
+    .delivery-date-section {
+      display: grid; grid-template-columns: auto 1fr;
+      gap: var(--sp-6); margin-bottom: var(--sp-6);
+    }
+    .delivery-date-col label {
+      display: block; font-size: var(--fs-sm);
+      color: var(--color-text-secondary); font-weight: var(--fw-medium);
+      margin-bottom: var(--sp-2);
+    }
+    .comment-section label {
+      display: block; font-size: var(--fs-sm);
+      color: var(--color-text-secondary); font-weight: var(--fw-medium);
+      margin-bottom: var(--sp-2);
+    }
+    .comment-section .textarea { min-height: 120px; }
+
+    .order-panel {
+      position: sticky; top: var(--sp-8);
+      display: flex; flex-direction: column; gap: var(--sp-3);
+    }
+
+    /* Manager nav uses compact logo */
+    .sidebar-logo--compact .sidebar-logo__icon {
+      width: 44px; height: 44px;
+      border-radius: var(--r-full);
+      border: 1.5px solid var(--color-accent);
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--color-bg);
+      flex-shrink: 0;
+    }
+    .sidebar-logo--compact .sidebar-logo__name {
+      font-size: var(--fs-xl); font-weight: var(--fw-bold);
+      color: var(--color-text); line-height: 1.1;
+    }
+    .sidebar-logo--compact .sidebar-logo__sub {
+      font-size: var(--fs-sm); color: var(--color-text-muted); display: block;
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 1280px) {
+      .main-content-wrap { grid-template-columns: 1fr 248px; gap: var(--sp-6); }
+    }
+    @media (max-width: 1024px) {
+      .main-content-wrap { grid-template-columns: 1fr 220px; gap: var(--sp-5); }
+      .product-item__controls { grid-template-columns: 1fr 0.65fr auto auto; }
+    }
+    @media (max-width: 768px) {
+      .main-content-wrap { grid-template-columns: 1fr; }
+      .product-item__controls { grid-template-columns: 1fr 1fr; gap: var(--sp-2); }
+      .product-item__controls .qty-counter { grid-column: 1; }
+      .product-item__controls .product-item__delete { grid-column: 2; justify-self: end; }
+      .delivery-date-section { grid-template-columns: 1fr; }
+      .order-panel { position: static; }
+    }
+    @media (max-width: 480px) {
+      .product-item { padding: var(--sp-3); }
+      .product-item__controls { grid-template-columns: 1fr; gap: var(--sp-2); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Mobile Header ──────────────────────────────────────── -->
+<header class="mobile-header" id="mobileHeader">
+  <div class="mobile-header__logo">
+    <div class="mobile-header__icon" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="#C14830" stroke-width="1.5" fill="#FAF4EA"/>
+        <path d="M9 10 Q10 6 14 7 Q17 8 17 11 Q17 14 14 15 Q12 16 11 15"
+              stroke="#C14830" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+        <ellipse cx="14" cy="17" rx="5" ry="4" fill="none" stroke="#C14830" stroke-width="1.2"/>
+      </svg>
+    </div>
+    <div class="mobile-header__text">
+      <div class="mobile-header__name">Ферма Лычкиных</div>
+      <div class="mobile-header__sub">Личный кабинет</div>
+    </div>
+  </div>
+  <button class="mobile-header__menu" id="menuBtn" aria-label="Открыть меню"
+          aria-expanded="false" aria-controls="sidebar">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+      <path d="M3 6H19M3 11H19M3 16H19" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round"/>
+    </svg>
+  </button>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay" role="presentation"></div>
+
+<div class="app-layout">
+
+  <!-- ── Manager Sidebar (compact logo) ────────────────────── -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Главное меню">
+
+    <!-- Compact logo -->
+    <div class="sidebar-logo sidebar-logo--compact">
+      <div class="sidebar-logo__icon" aria-hidden="true">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <path d="M7 13 Q8 8 13 8 Q17 8 17 12 Q17 15 14 16"
+                stroke="#C14830" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          <ellipse cx="15" cy="20" rx="8" ry="6" fill="none" stroke="#C14830" stroke-width="1.5"/>
+          <path d="M10 24 L9 27 M15 25 L15 27 M20 24 L21 27"
+                stroke="#C14830" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="11" cy="11" r="1.5" fill="#C14830"/>
+          <path d="M9 9 L7 7" stroke="#C14830" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M10 6 Q11 4 12 5 Q12 7 14 6 Q13 8 11 8" stroke="#C14830" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="sidebar-logo__text">
+        <span class="sidebar-logo__name">Ферма<br>Лычкиных</span>
+        <span class="sidebar-logo__sub">Личный кабинет</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="manager-main.html" class="nav-item is-active" aria-current="page">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M3 10L10 3L17 10V17H12.5V12.5H7.5V17H3V10Z"
+                stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        Главная
+      </a>
+      <a href="order-history.html" class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10 6.5V10L12.5 12.5" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        История заказов
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-support">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12.1 7.9L14.9 5.1M5.1 14.9L7.9 12.1M7.9 7.9L5.1 5.1M14.9 14.9L12.1 12.1"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Поддержка
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-user__info">
+          <div class="sidebar-user__name">ИП Иванов</div>
+          <div class="sidebar-user__address">г. Краснодар, ул. Северная 16/2<br>стр 1</div>
+        </div>
+        <button class="sidebar-user__logout" aria-label="Выйти">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M12 3H15C15.5523 3 16 3.44772 16 4V14C16 14.5523 15.5523 15 15 15H12"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M10 12L13 9L10 6" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13 9H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main content ──────────────────────────────────────── -->
+  <main class="page-content" id="main" tabindex="-1">
+
+    <!-- Banner -->
+    <div class="banner" role="banner">
+      <span class="banner__tag">Доставка</span>
+      <h2 class="banner__title">Настройте изображение, заголовок и описание баннера</h2>
+      <p class="banner__subtitle">Настройте содержимое баннера. Изменения автоматически применятся после повторного входа</p>
+    </div>
+
+    <h1 class="section-title">Новая заявка</h1>
+
+    <div class="main-content-wrap">
+
+      <!-- ── Form ─────────────────────────────────────────── -->
+      <div>
+        <div class="product-list" id="productList">
+
+          <!-- Row 1 -->
+          <div class="product-item" data-product-row>
+            <div class="product-item__controls">
+              <select class="select" aria-label="Продукт">
+                <option>Грудка</option>
+                <option>Фарш</option>
+                <option>Филе грудки ЦБ</option>
+                <option>Бескостные окорочка ЦБ</option>
+              </select>
+              <select class="select" aria-label="Тара">
+                <option>Лоток</option>
+                <option>Ящик монолит</option>
+                <option>Пакет</option>
+              </select>
+              <div class="qty-counter" role="group" aria-label="Количество">
+                <button class="qty-counter__btn" type="button" aria-label="Уменьшить">−</button>
+                <span class="qty-counter__value" aria-live="polite">1</span>
+                <button class="qty-counter__btn" type="button" aria-label="Увеличить">+</button>
+              </div>
+              <button class="product-item__delete" type="button" aria-label="Удалить позицию">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M3 5H15M7 5V3.5C7 3.22 7.22 3 7.5 3H10.5C10.78 3 11 3.22 11 3.5V5"
+                        stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                  <path d="M4.5 5L5.5 15H12.5L13.5 5" stroke="currentColor" stroke-width="1.4"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="product-item__meta">
+              <label class="checkbox-label">
+                <input type="checkbox" checked>Замороженное
+              </label>
+              <i class="help-icon">?</i>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="product-item" data-product-row>
+            <div class="product-item__controls">
+              <select class="select is-placeholder" aria-label="Продукт">
+                <option value="" selected>Продукт</option>
+                <option>Грудка</option><option>Фарш</option>
+              </select>
+              <select class="select is-placeholder" aria-label="Тара">
+                <option value="" selected>Тара</option>
+                <option>Лоток</option><option>Ящик монолит</option>
+              </select>
+              <div class="qty-counter" role="group" aria-label="Количество">
+                <button class="qty-counter__btn" type="button" aria-label="Уменьшить" disabled>−</button>
+                <span class="qty-counter__value" aria-live="polite">0</span>
+                <button class="qty-counter__btn" type="button" aria-label="Увеличить">+</button>
+              </div>
+              <button class="product-item__delete" type="button" aria-label="Удалить позицию">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M3 5H15M7 5V3.5C7 3.22 7.22 3 7.5 3H10.5C10.78 3 11 3.22 11 3.5V5"
+                        stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                  <path d="M4.5 5L5.5 15H12.5L13.5 5" stroke="currentColor" stroke-width="1.4"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="product-item__meta">
+              <label class="checkbox-label">
+                <input type="checkbox">Замороженное
+              </label>
+              <i class="help-icon">?</i>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-add-position" type="button">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round"/>
+          </svg>
+          Добавить позицию
+        </button>
+
+        <div class="delivery-date-section">
+          <div class="delivery-date-col">
+            <label>Способ получения</label>
+            <div class="delivery-tabs" role="group" aria-label="Способ получения">
+              <button class="delivery-tab is-active" type="button" aria-pressed="true">Доставка</button>
+              <button class="delivery-tab" type="button" aria-pressed="false">Самовывоз</button>
+            </div>
+          </div>
+          <div class="delivery-date-col">
+            <label>Дата отгрузки</label>
+            <div class="date-field" role="button" tabindex="0">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <rect x="1.5" y="3" width="13" height="11.5" rx="2"
+                      stroke="currentColor" stroke-width="1.4"/>
+                <path d="M5 1.5V4M11 1.5V4" stroke="currentColor" stroke-width="1.4"
+                      stroke-linecap="round"/>
+                <path d="M1.5 7H14.5" stroke="currentColor" stroke-width="1.3"/>
+              </svg>
+              13 мая, среда
+            </div>
+          </div>
+        </div>
+
+        <div class="comment-section">
+          <label for="comment">Комментарий к заказу</label>
+          <textarea class="textarea" id="comment" name="comment"
+                    placeholder="Особые пожелания, удобное время доставки…"
+                    rows="5"></textarea>
+        </div>
+      </div>
+
+      <!-- ── Order panel ───────────────────────────────────── -->
+      <aside class="order-panel" aria-label="Итог заказа">
+        <div class="order-summary">
+          <div class="order-summary__submit">
+            <span class="order-summary__submit-link is-disabled"
+                  role="button" tabindex="0" aria-disabled="true">
+              Оформить заявку
+            </span>
+          </div>
+          <div class="order-summary__body">
+            <h3 class="order-summary__title">Итог заказа</h3>
+            <div class="order-summary__row">
+              <span class="order-summary__label">Продукты</span>
+              <span class="order-summary__value">0</span>
+            </div>
+            <div class="order-summary__row">
+              <span class="order-summary__label">Тип доставки</span>
+              <span class="order-summary__value">Не выбрано</span>
+            </div>
+            <div class="order-summary__row">
+              <span class="order-summary__label">Дата отгрузки</span>
+              <span class="order-summary__value">13 мая, среда</span>
+            </div>
+          </div>
+        </div>
+        <div class="info-box">
+          <div class="info-box__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M9 8V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="9" cy="5.5" r="0.8" fill="currentColor"/>
+            </svg>
+          </div>
+          <p class="info-box__text">
+            Заявки принимаются до 15:00 —<br>отгрузка через 2 рабочих дня
+          </p>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: Order confirmation (1440px primary state)
+     Shown by default — node 4549:45249
+     ══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay is-open" id="modalConfirm" role="dialog" aria-modal="true"
+     aria-labelledby="confirmTitle">
+  <div class="modal">
+    <button class="modal__close" id="closeConfirm" aria-label="Закрыть">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <div class="modal__illustration" aria-hidden="true">
+      <!-- Truck illustration -->
+      <svg width="110" height="90" viewBox="0 0 110 90" fill="none">
+        <rect x="5" y="22" width="65" height="44" rx="4"
+              stroke="#1C1C1C" stroke-width="2.5" fill="none"/>
+        <path d="M70 38H88L96 50V66H70V38Z"
+              stroke="#1C1C1C" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+        <circle cx="26" cy="70" r="9" stroke="#1C1C1C" stroke-width="2.5" fill="none"/>
+        <circle cx="80" cy="70" r="9" stroke="#1C1C1C" stroke-width="2.5" fill="none"/>
+        <!-- Speed lines -->
+        <path d="M2 32H18M2 42H12M2 52H18"
+              stroke="#1C1C1C" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- Window -->
+        <rect x="72" y="41" width="16" height="12" rx="2"
+              stroke="#1C1C1C" stroke-width="1.8" fill="none"/>
+      </svg>
+    </div>
+
+    <div class="modal__body">
+      <h2 class="modal__title" id="confirmTitle">Заявка №13413 принята</h2>
+      <p class="modal__subtitle">Отгрузка — 18 мая, понедельник</p>
+    </div>
+
+    <div class="modal__footer">
+      <a href="order-history.html" class="btn btn-secondary">История</a>
+      <button type="button" class="btn btn-primary" id="newOrderBtn">Новый заказ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Sidebar toggle ──────────────────────────────────── */
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const menuBtn = document.getElementById('menuBtn');
+  const openSidebar  = () => { sidebar.classList.add('is-open'); overlay.classList.add('is-open'); menuBtn.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; };
+  const closeSidebar = () => { sidebar.classList.remove('is-open'); overlay.classList.remove('is-open'); menuBtn.setAttribute('aria-expanded','false'); document.body.style.overflow=''; };
+  menuBtn.addEventListener('click', () => sidebar.classList.contains('is-open') ? closeSidebar() : openSidebar());
+  overlay.addEventListener('click', closeSidebar);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSidebar(); } });
+
+  /* ── Close modal ─────────────────────────────────────── */
+  document.getElementById('closeConfirm').addEventListener('click', () => {
+    document.getElementById('modalConfirm').classList.remove('is-open');
+  });
+  document.getElementById('newOrderBtn').addEventListener('click', () => {
+    document.getElementById('modalConfirm').classList.remove('is-open');
+    document.getElementById('main').focus();
+  });
+
+  /* ── Delivery tabs ───────────────────────────────────── */
+  document.querySelectorAll('.delivery-tabs').forEach(group => {
+    group.querySelectorAll('.delivery-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        group.querySelectorAll('.delivery-tab').forEach(t => { t.classList.remove('is-active'); t.setAttribute('aria-pressed','false'); });
+        tab.classList.add('is-active'); tab.setAttribute('aria-pressed','true');
+      });
+    });
+  });
+
+  /* ── Qty counters ────────────────────────────────────── */
+  document.querySelectorAll('.qty-counter').forEach(counter => {
+    const valueEl = counter.querySelector('.qty-counter__value');
+    const decBtn  = counter.querySelector('[aria-label="Уменьшить"]');
+    const incBtn  = counter.querySelector('[aria-label="Увеличить"]');
+    let val = parseInt(valueEl.textContent, 10);
+    function update() { valueEl.textContent = val; decBtn.disabled = val <= 0; }
+    update();
+    incBtn.addEventListener('click', () => { val++; update(); });
+    decBtn.addEventListener('click', () => { if (val > 0) { val--; update(); } });
+  });
+</script>
+</body>
+</html>

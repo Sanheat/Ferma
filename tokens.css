@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ─── Brand colours ─────────────────────────────────────── */
+  --color-primary:        #B87B2C;   /* golden-amber – buttons, links */
+  --color-primary-hover:  #9E6920;
+  --color-primary-light:  #FAF0DC;   /* tinted bg for tags / hover */
+  --color-accent:         #C14830;   /* terracotta – banner, logo text */
+
+  /* ─── Surface colours ───────────────────────────────────── */
+  --color-bg:             #FAF4EA;   /* page background */
+  --color-surface:        #FFFFFF;   /* card / input backgrounds */
+  --color-nav-active:     #EDE3CE;   /* sidebar active item */
+
+  /* ─── Text colours ──────────────────────────────────────── */
+  --color-text:           #1C1C1C;
+  --color-text-secondary: #666666;
+  --color-text-muted:     #9B9B9B;
+  --color-text-inverse:   #FFFFFF;
+
+  /* ─── Border colours ────────────────────────────────────── */
+  --color-border:         #E0D9CE;
+  --color-border-focus:   #B87B2C;
+
+  /* ─── Status colours ────────────────────────────────────── */
+  --color-accepted:       #27AE60;
+  --color-processing:     #2D80D2;
+  --color-shipped:        #D4800A;
+  --color-cancelled:      #C0392B;
+
+  /* ─── Info box ──────────────────────────────────────────── */
+  --color-info-bg:        #FFFBF0;
+  --color-info-border:    #D4A855;
+  --color-info-text:      #B87B2C;
+
+  /* ─── Typography ────────────────────────────────────────── */
+  --font:                 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --fs-xs:   11px;
+  --fs-sm:   12px;
+  --fs-base: 14px;
+  --fs-md:   15px;
+  --fs-lg:   16px;
+  --fs-xl:   20px;
+  --fs-2xl:  24px;
+  --fs-3xl:  28px;
+  --fs-4xl:  36px;
+  --fs-5xl:  48px;
+
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  --lh-tight:   1.2;
+  --lh-snug:    1.35;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.6;
+
+  /* ─── Spacing (4px base) ────────────────────────────────── */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-7:  28px;
+  --sp-8:  32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* ─── Border radius ─────────────────────────────────────── */
+  --r-xs:   4px;
+  --r-sm:   6px;
+  --r-md:   8px;
+  --r-lg:   12px;
+  --r-xl:   16px;
+  --r-2xl:  20px;
+  --r-full: 9999px;
+
+  /* ─── Shadows ───────────────────────────────────────────── */
+  --shadow-xs:    0 1px 2px rgba(0,0,0,.06);
+  --shadow-sm:    0 1px 4px rgba(0,0,0,.08);
+  --shadow-md:    0 4px 12px rgba(0,0,0,.10);
+  --shadow-lg:    0 8px 24px rgba(0,0,0,.12);
+  --shadow-modal: 0 20px 60px rgba(0,0,0,.18);
+
+  /* ─── Layout ────────────────────────────────────────────── */
+  --sidebar-w:   260px;
+  --content-pad: 32px;
+  --transition:  200ms ease;
+}
